@@ -137,3 +137,26 @@ export function gear(items) {
 
   return table.toString();
 }
+
+function questProgress(progress) {
+  if (progress.boss) {
+    return (
+      `${progress.boss}
+${progress.health} / ${progress.maxHealth}`
+    );
+  } else {
+    return (
+      `${progress.collected} / ${progress.toCollect} ${progress.label}`
+    );
+  }
+}
+
+export function quest(questDetails) {
+  return `
+${questDetails.label}
+${R.repeat('=', questDetails.label.length).join('')}
+${questDetails.description}
+${R.repeat('=', questDetails.label.length).join('')}
+${questProgress(questDetails.progress)}
+`;
+}

@@ -120,6 +120,13 @@ cli.command('gear', 'List available gear for purchase.')
     callback();
   })
 
+cli.command('quest', 'List current quest details.')
+  .action(async (args, callback) => {
+    const questDetails = await user.quest();
+    log(format.quest(questDetails))
+    callback();
+  });
+
 export async function run() {
   setLogger(cli.log.bind(cli));
   const stats = await user.stats();
