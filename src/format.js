@@ -8,7 +8,7 @@ function pp(n) {
 }
 
 function withEmojis(s) {
-  return emoji.emojify(s.replace(/:heart:|:recycle:|☢️ ️/, '$& '));
+  return emoji.emojify(s.replace(/:heart:|:recycle:|☢️ ️|:arrow_up_right:/, '$& '));
 }
 
 const makeTableOpts = (opts) => R.merge(opts, {
@@ -33,15 +33,32 @@ const makeTableOpts = (opts) => R.merge(opts, {
 
 const makeTable = (opts) => new Table(makeTableOpts(opts));
 const isDaily = task => task.type === 'daily';
+const isTodo = task => task.type === 'todo';
 
 function getFilter(type = 'due') {
   switch (type) {
-    case 'due': return x => !x.isCompleted && x.isDue;
-    case 'all': return x => x;
-    case 'grey': return x => x.isCompleted || !x.isDue;
+    case 'all': {
+      return x => x;
+    }
+
+    case 'dated':
+    case 'due': {
+      return x => !x.isCompleted && x.isDue;
+    }
+
+    case 'completed':
+    case 'grey': {
+      return x => x.isCompleted || !x.isDue;
+    }
+
     default: throw new Error(`filter '${type}' not supported`)
   }
 }
+
+const shouldShowCompletedColumn = (task, filterType) => (
+  (isTodo(task) && filterType === 'all') ||
+  (isDaily(task) && filterType === 'all')
+)
 
 export function tasks(taskList, filterType) {
   const table = makeTable({});
@@ -50,7 +67,10 @@ export function tasks(taskList, filterType) {
   taskList.filter(taskFilter).forEach(task => {
     const row = [];
     row.push(task.shortId);
-    if (filterType === 'all' && isDaily(task)) row.push(task.isCompleted ? 'X' : ' ');
+
+    if (shouldShowCompletedColumn(task, filterType)) {
+      row.push(task.isCompleted ? 'X' : ' ');
+    }
     row.push(withEmojis(task.label));
     table.push(row)
   });

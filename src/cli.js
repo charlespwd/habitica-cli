@@ -1,8 +1,4 @@
-import {
-  TYPES,
-  getTasks,
-  scoreTasks,
-} from './tasks';
+import * as tasks from './tasks';
 import * as user from './user';
 import * as format from './format';
 import {
@@ -10,6 +6,7 @@ import {
   setLogger,
 } from './utils';
 
+const TYPES = tasks.TYPES;
 const vorpal = require('vorpal');
 const cli = vorpal();
 
@@ -23,7 +20,7 @@ cli.command('status', 'list your stats')
 cli.command('habits', 'list your habits')
   .alias('h')
   .action(async (args, callback) => {
-    const habits = await getTasks({
+    const habits = await tasks.getTasks({
       type: TYPES.HABITS,
     });
 
@@ -37,7 +34,7 @@ cli.command('habits score [ids...]', 'score one or multiple habits')
   .option('-d, --down', 'score a habit down')
   .action(async (args, callback) => {
     const stats = await user.stats();
-    const scores = await scoreTasks({
+    const scores = await tasks.scoreTasks({
       type: TYPES.HABITS,
       ids: args.ids || [],
       direction: args.options.down ? 'down' : 'up',
@@ -53,7 +50,7 @@ cli.command('dailies', 'list your dailies')
   .alias('d')
   .option('-f, --filter [filter]', 'list filter type (all | due | grey)', ['due', 'all', 'grey'])
   .action(async (args, callback) => {
-    const dailies = await getTasks({
+    const dailies = await tasks.getTasks({
       type: TYPES.DAILIES,
     });
 
@@ -69,7 +66,7 @@ cli.command('dailies complete [ids...]', 'complete one or multiple dailies')
   .option('-d, --down', 'Undo a complete action on a task')
   .action(async (args, callback) => {
     const stats = await user.stats();
-    const scores = await scoreTasks({
+    const scores = await tasks.scoreTasks({
       type: TYPES.DAILIES,
       ids: args.ids || [],
       direction: args.options.down ? 'down' : 'up',
@@ -83,13 +80,11 @@ cli.command('dailies complete [ids...]', 'complete one or multiple dailies')
 
 cli.command('todos', 'list your todos')
   .alias('t')
+  .option('-f, --filter [filter]', 'list filter type (all | dated | completed)', ['all', 'dated', 'completed'])
   .action(async (args, callback) => {
-    const habits = await getTasks({
-      type: TYPES.TODOS,
-    });
-
-    log(format.tasks(habits, 'all'));
-
+    const filter = args.options.filter || 'dated';
+    const todos = await tasks.getTodos({ filter });
+    log(format.tasks(todos, filter));
     callback();
   });
 
@@ -98,12 +93,14 @@ cli.command('todos complete [ids...]', 'score one or multiple habits')
   .alias('tc')
   .alias('ts')
   .option('-u, --undo', 'uncomplete a todo')
+  .option('-d, --down', 'uncomplete a todo (alias)')
   .action(async (args, callback) => {
     const stats = await user.stats();
-    const scores = await scoreTasks({
+    const isDown = args.options.undo || args.options.down;
+    const scores = await tasks.scoreTasks({
       type: TYPES.TODOS,
       ids: args.ids || [],
-      direction: args.options.undo ? 'down' : 'up',
+      direction: isDown ? 'down' : 'up',
     });
     const afterStats = await user.stats();
 
@@ -112,9 +109,10 @@ cli.command('todos complete [ids...]', 'score one or multiple habits')
     callback();
   });
 
-
-export function run() {
+export async function run() {
   setLogger(cli.log.bind(cli));
+  const stats = await user.stats();
+  log(`Welcome back ${stats.userName}!`)
   cli.delimiter('habitica $ ')
     .history('habitica-cli')
     .show();
