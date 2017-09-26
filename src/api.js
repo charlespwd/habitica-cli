@@ -3,9 +3,11 @@ import { mergeDeepLeft } from 'ramda';
 import * as ini from 'ini';
 import * as fs from 'fs';
 import * as qs from 'qs';
+import * as path from 'path';
 
 const BASE_URL = 'https://habitica.com/api/v3';
-const CONFIG_PATH = `${process.env.XDG_CONFIG_HOME}/habitica/auth.cfg`;
+const CONFIG_HOME = process.env.XDG_CONFIG_HOME || path.join(process.env.HOME, '.config');
+const CONFIG_PATH = path.join(CONFIG_HOME, 'habitica', 'auth.cfg');
 const config = ini.parse(fs.readFileSync(CONFIG_PATH, 'utf-8'));
 
 export const getUserID = () => config.Habitica.login;
