@@ -113,7 +113,7 @@ cli.command('todos complete [ids...]', 'score one or multiple habits')
   });
 
 
-export default function run() {
+export function run() {
   setLogger(cli.log.bind(cli));
   cli.delimiter('habitica $ ')
     .history('habitica-cli')

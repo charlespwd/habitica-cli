@@ -1,5 +1,14 @@
 {
+  "name": "habitica-cli",
+  "version": "1.0.0",
+  "description": "A better habitica command line interface",
+  "author": "Charles-Philippe Clermont @charlespwd",
+  "main": "index.js",
+  "bin": {
+    "habitica": "bin/habitica.js"
+  },
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
     "cli-table": "^0.3.1",
     "ini": "^1.3.4",
     "node-emoji": "^1.8.1",
@@ -9,18 +18,14 @@
     "request-promise-native": "^1.0.5",
     "vorpal": "^1.12.0"
   },
-  "name": "habitica-cli",
-  "version": "1.0.0",
-  "description": "A better habitica command line interface",
-  "main": "index.js",
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.6.0",
     "nodemon": "^1.12.1"
   },
   "scripts": {
+    "build": "babel -d lib src",
     "devel": "nodemon --watch 'src/**/*.js' --ignore 'src/**/*.spec.js' --exec 'babel-node' index.js"
   },
-  "author": "Charles-Philippe Clermont @charlespwd",
   "license": "MIT"
 }
