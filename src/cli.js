@@ -1,5 +1,6 @@
 import * as tasks from './tasks';
 import * as user from './user';
+import * as gear from './gear';
 import * as format from './format';
 import {
   log,
@@ -10,14 +11,15 @@ const TYPES = tasks.TYPES;
 const vorpal = require('vorpal');
 const cli = vorpal();
 
-cli.command('status', 'list your stats')
+cli.command('status', 'List your stats.')
+  .alias('stats')
   .action(async (args, callback) => {
     const stats = await user.stats();
     log(format.stats(stats));
     callback();
   });
 
-cli.command('habits', 'list your habits')
+cli.command('habits', 'List your habits.')
   .alias('h')
   .action(async (args, callback) => {
     const habits = await tasks.getTasks({
@@ -29,9 +31,9 @@ cli.command('habits', 'list your habits')
     callback();
   });
 
-cli.command('habits score [ids...]', 'score one or multiple habits')
+cli.command('habits score [ids...]', 'Score one or multiple habits.')
   .alias('hs')
-  .option('-d, --down', 'score a habit down')
+  .option('-d, --down', 'Score a habit down.')
   .action(async (args, callback) => {
     const stats = await user.stats();
     const scores = await tasks.scoreTasks({
@@ -46,9 +48,9 @@ cli.command('habits score [ids...]', 'score one or multiple habits')
     callback();
   });
 
-cli.command('dailies', 'list your dailies')
+cli.command('dailies', 'List your dailies.')
   .alias('d')
-  .option('-f, --filter [filter]', 'list filter type (all | due | grey)', ['due', 'all', 'grey'])
+  .option('-f, --filter [filter]', 'List filter type (all | due | grey).', ['due', 'all', 'grey'])
   .action(async (args, callback) => {
     const dailies = await tasks.getTasks({
       type: TYPES.DAILIES,
@@ -59,11 +61,11 @@ cli.command('dailies', 'list your dailies')
     callback();
   });
 
-cli.command('dailies complete [ids...]', 'complete one or multiple dailies')
+cli.command('dailies complete [ids...]', 'Complete one or multiple dailies.')
   .alias('dailies score')
   .alias('dc')
   .alias('ds')
-  .option('-d, --down', 'Undo a complete action on a task')
+  .option('-d, --down', 'Undo a complete action on a task.')
   .action(async (args, callback) => {
     const stats = await user.stats();
     const scores = await tasks.scoreTasks({
@@ -78,9 +80,9 @@ cli.command('dailies complete [ids...]', 'complete one or multiple dailies')
     callback();
   });
 
-cli.command('todos', 'list your todos')
+cli.command('todos', 'List your todos.')
   .alias('t')
-  .option('-f, --filter [filter]', 'list filter type (all | dated | completed)', ['all', 'dated', 'completed'])
+  .option('-f, --filter [filter]', 'List filter type (all | dated | completed).', ['all', 'dated', 'completed'])
   .action(async (args, callback) => {
     const filter = args.options.filter || 'dated';
     const todos = await tasks.getTodos({ filter });
@@ -88,12 +90,12 @@ cli.command('todos', 'list your todos')
     callback();
   });
 
-cli.command('todos complete [ids...]', 'score one or multiple habits')
+cli.command('todos complete [ids...]', 'Score one or multiple habits.')
   .alias('todos score')
   .alias('tc')
   .alias('ts')
-  .option('-u, --undo', 'uncomplete a todo')
-  .option('-d, --down', 'uncomplete a todo (alias)')
+  .option('-u, --undo', 'Uncomplete a todo.')
+  .option('-d, --down', 'Uncomplete a todo. (alias)')
   .action(async (args, callback) => {
     const stats = await user.stats();
     const isDown = args.options.undo || args.options.down;
@@ -108,6 +110,15 @@ cli.command('todos complete [ids...]', 'score one or multiple habits')
 
     callback();
   });
+
+cli.command('gear', 'List available gear for purchase.')
+  .action(async (args, callback) => {
+    const items = await gear.getBuyItems();
+
+    log(format.gear(items));
+
+    callback();
+  })
 
 export async function run() {
   setLogger(cli.log.bind(cli));

@@ -31,7 +31,7 @@ const makeTableOpts = (opts) => R.merge(opts, {
   },
 });
 
-const makeTable = (opts) => new Table(makeTableOpts(opts));
+const makeTable = (opts = {}) => new Table(makeTableOpts(opts));
 const isDaily = task => task.type === 'daily';
 const isTodo = task => task.type === 'todo';
 
@@ -116,4 +116,24 @@ MP: ${pp(statsData.mana)} / ${statsData.maxMana}
 XP: ${pp(statsData.experience)} / ${statsData.toNextLevel}
 GOLD: ${pp(statsData.gold)}
 `;
+}
+
+export function gear(items) {
+  const table = makeTable({
+    head: ['Price', 'Name', 'STR', 'CON', 'INT', 'PER'],
+    colAligns: ['right', 'left', 'right', 'right', 'right', 'right'],
+  });
+
+  for (const item of R.sortBy(R.prop('label'), items)) {
+    table.push([
+      `${item.price} GP`,
+      item.label,
+      item.stats.str,
+      item.stats.con,
+      item.stats.int,
+      item.stats.per,
+    ]);
+  }
+
+  return table.toString();
 }
