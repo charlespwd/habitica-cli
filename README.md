@@ -4,11 +4,11 @@ A pleasant habitica command line interface which features built-in emoji support
 
 ## Demo
 
-![Demo](./img/demo.gif)
+<img alt="Demo" src="./img/demo.gif" width="75%" />
 
 ## Features
 
-* Built-in emoji support :check: :fire: :zap:
+* Built-in emoji support :fire: :zap:
 * Listing habits, tasks and todos
 * Scoring habits, tasks and todos
 * Command history
