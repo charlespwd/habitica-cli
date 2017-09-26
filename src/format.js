@@ -83,19 +83,27 @@ export function tasks(taskList, filterType) {
 }
 
 export function statsDiff(before, after) {
+  const isLevelUp = after.level > before.level;
   const deltas = {
     HP: after.health - before.health,
     MP: after.mana - before.mana,
     GP: after.gold - before.gold,
-    XP: after.experience - before.experience,
+    XP: isLevelUp
+      ? (after.experience + before.toNextLevel - before.experience)
+      : (after.experience - before.experience),
   };
 
   const str = [];
+
   R.forEachObjIndexed((delta, key) => {
     if (delta !== 0) {
       str.push(`${delta > 0 ? '+' : ''}${pp(delta)} ${key}`)
     }
   }, deltas);
+
+  if (isLevelUp) {
+    str[str.length - 1] += '\nLEVEL UP!';
+  }
 
   return str.join(', ');
 }
