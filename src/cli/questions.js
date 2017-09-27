@@ -1,12 +1,14 @@
-import { DIFFICULTIES } from '../tasks';
+import {
+  DAYS,
+  DIFFICULTIES,
+  FREQUENCIES,
+} from '../tasks';
 
 export const title = {
   type: 'input',
   name: 'title',
   message: 'What should we call it? ',
-  validate(input) {
-    return input !== '';
-  },
+  validate: input => input !== '',
 };
 
 export const notes = {
@@ -41,4 +43,33 @@ export const difficulty = {
   message: 'How difficult? ',
   choices: Object.keys(DIFFICULTIES),
   default: 'EASY',
+};
+
+export const frequency = {
+  type: 'list',
+  name: 'frequency',
+  message: 'Daily or weekly? ',
+  choices: Object.keys(FREQUENCIES),
+  default: 'DAILY',
+};
+
+export const repeat = {
+  type: 'checkbox',
+  name: 'repeat',
+  message: 'Days of the week? ',
+  choices: Object.keys(DAYS),
+  when: answers => answers.frequency === 'WEEKLY',
+};
+
+export const everyX = {
+  type: 'input',
+  name: 'everyX',
+  message: 'Every [x] days? x = ',
+  default: 1,
+  filter: input => parseInt(input, 10),
+  validate: (input) => {
+    const int = parseInt(input, 10);
+    return !Number.isNaN(int) && int > 0;
+  },
+  when: answers => answers.frequency === 'DAILY',
 };

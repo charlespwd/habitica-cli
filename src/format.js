@@ -168,3 +168,11 @@ ${R.repeat('=', questDetails.label.length).join('')}
 ${questProgress(questDetails.progress)}
 `;
 }
+
+export function scores(scoresData) {
+  return R.pipe(
+    R.filter(R.prop('drop')),
+    R.map(score => score.drop),
+    R.join('\n'),
+  )(scoresData);
+}

@@ -3,6 +3,21 @@ import { request, url } from './api';
 
 const mapIndexed = R.addIndex(R.map);
 
+export const DAYS = {
+  SUNDAY: 'su',
+  MONDAY: 'm',
+  TUESDAY: 't',
+  WEDNESDAY: 'w',
+  THURSDAY: 'th',
+  FRIDAY: 'f',
+  SATURDAY: 's',
+};
+
+export const FREQUENCIES = {
+  DAILY: 'daily',
+  WEEKLY: 'weekly',
+};
+
 export const DIFFICULTIES = {
   TRIVIAL: '0.1',
   EASY: '1',
@@ -102,15 +117,18 @@ export async function getAllTodos() {
   return todos.concat(completed);
 }
 
-export async function create({
+export function create({
   type,
   title,
   notes,
+  frequency,
+  repeat,
+  everyX,
   difficulty = DIFFICULTIES.EASY,
   down = true,
   up = true,
 }) {
-  return await request(url('tasks/user'), {
+  return request(url('tasks/user'), {
     method: 'POST',
     body: {
       type,
@@ -118,10 +136,15 @@ export async function create({
       text: title,
       priority: difficulty,
 
+      // dailies
+      frequency,
+      everyX,
+      repeat,
+
       // only valid for habits, ignored otherwise
       up,
       down,
-    }
+    },
   });
 }
 
@@ -151,7 +174,7 @@ export async function scoreTasks({ type, ids, direction = 'up' }) {
   const tasks = getFromCache(type);
   const scoredTasks = ids.map(id => R.find(task => task.shortId === id.toString(), tasks))
     .filter(R.identity)
-    .filter(x => direction === 'up' ? !x.isCompleted : x.isCompleted)
+    .filter(x => (direction === 'up' ? !x.isCompleted : x.isCompleted));
   const taskIds = scoredTasks.map(x => x.id);
 
   // Doing sequentially because the API can't handle the load.
@@ -164,7 +187,7 @@ export async function scoreTasks({ type, ids, direction = 'up' }) {
 
   // we need to mutate the cache to prevent double spends because somehow
   // the backend doesn't prevent it!
-  scoredTasks.forEach(task => {
+  scoredTasks.forEach((task) => {
     task.isCompleted = !task.isCompleted;
     task.isDue = !task.isDue;
   });
