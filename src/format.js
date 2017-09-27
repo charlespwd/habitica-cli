@@ -145,9 +145,9 @@ function questProgress(progress) {
 ${progress.health} / ${progress.maxHealth}`
     );
   } else {
-    return (
-      `${progress.collected} / ${progress.toCollect} ${progress.label}`
-    );
+    return progress.map(x => (
+      `${x.collected} / ${x.toCollect} ${x.label}`
+    )).join('\n');
   }
 }
 

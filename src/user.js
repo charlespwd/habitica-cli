@@ -25,34 +25,25 @@ export async function stats() {
   return toStats(data);
 };
 
-const toCollectName = R.pipe(
-  R.pathOr({}, ['collect']),
-  R.toPairs,
-  R.map(R.path(['1', 'text'])),
-  R.join(' '),
-);
-
-const toCollect = R.pipe(
-  R.pathOr({}, ['collect']),
-  R.toPairs,
-  R.map(R.path(['1', 'count'])),
-  R.sum,
-);
-
 function toBossQuestProgress(quest, questDetails) {
   return {
     boss: R.path(['boss', 'name'], questDetails),
     maxHealth: R.path(['boss', 'hp'], questDetails),
-    health: R.pathOr(0, ['boss', 'hp'], quest),
+    health: R.pathOr(0, ['progress', 'hp'], quest),
   };
 }
 
 function toCollectQuestProgress(quest, questDetails) {
-  return {
-    label: toCollectName(questDetails),
-    collected: quest.progress.collectedItems,
-    toCollect: toCollect(questDetails),
-  };
+  return R.pipe(
+    R.pathOr({}, ['collect']),
+    R.toPairs,
+    R.map(([collectKey, collectInfo]) => ({
+      label: collectInfo.text,
+      key: collectKey,
+      collected: quest.progress.collect[collectKey],
+      toCollect: collectInfo.count,
+    })),
+  )(questDetails);
 }
 
 function toQuestDetails(quest, questDetails) {
@@ -75,12 +66,22 @@ function toQuestDetails(quest, questDetails) {
   };
 }
 
+const getContent = R.memoize(() => request(url('content')));
+const getPartyId = R.memoize(async () => {
+  const group = await request(url('groups', {
+    type: 'party',
+  }))
+
+  return R.path(['id'], R.head(group));
+});
+
 export async function quest() {
-  const [content, user] = await Promise.all([
-    request(url('content')),
-    getUserData(),
+  const partyId = await getPartyId();
+  const [content, group] = await Promise.all([
+    getContent(),
+    request(url(`groups/${partyId}`)),
   ]);
-  const quest = user.party.quest;
+  const quest = group.quest;
   const questDetails = content.quests[quest.key];
   return toQuestDetails(quest, questDetails);
 }
