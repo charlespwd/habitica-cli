@@ -7,8 +7,16 @@ function pp(n) {
   return n.toFixed(2);
 }
 
+const twoCharacterEmojis = new RegExp([
+  ':heart',
+  ':recycle:',
+  '☢️ ️',
+  ':arrow_up_right:',
+  ':scissors:',
+].join('|'), 'g')
+
 function withEmojis(s) {
-  return emoji.emojify(s.replace(/:heart:|:recycle:|☢️ ️|:arrow_up_right:/, '$& '));
+  return emoji.emojify(s.replace(twoCharacterEmojis, '$& '));
 }
 
 const makeTableOpts = (opts) => R.merge(opts, {

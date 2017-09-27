@@ -19,7 +19,8 @@ cli.command('status', 'List your stats.')
     callback();
   });
 
-cli.command('habits', 'List your habits.')
+cli.command('habits list', 'List your habits.')
+  .alias('habits')
   .alias('h')
   .action(async (args, callback) => {
     const habits = await tasks.getTasks({
