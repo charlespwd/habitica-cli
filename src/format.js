@@ -1,7 +1,7 @@
 import R from 'ramda';
 import emoji from 'node-emoji';
 import Table from 'cli-table';
-import { log, capitalize } from './utils';
+import { capitalize } from './utils';
 
 function pp(n) {
   return n.toFixed(2);
@@ -13,28 +13,28 @@ const twoCharacterEmojis = new RegExp([
   '☢️ ️',
   ':arrow_up_right:',
   ':scissors:',
-].join('|'), 'g')
+].join('|'), 'g');
 
 function withEmojis(s) {
   return emoji.emojify(s.replace(twoCharacterEmojis, '$& '));
 }
 
-const makeTableOpts = (opts) => R.merge(opts, {
+const makeTableOpts = opts => R.merge(opts, {
   chars: {
-    'top': '─' ,
-    'top-mid': '' ,
-    'top-left': '' ,
+    'top': '─',
+    'top-mid': '',
+    'top-left': '',
     'top-right': '',
-    'bottom': '─' ,
-    'bottom-mid': '' ,
-    'bottom-left': '' ,
+    'bottom': '─',
+    'bottom-mid': '',
+    'bottom-left': '',
     'bottom-right': '',
-    'left': '' ,
-    'left-mid': '─' ,
-    'mid': '─' ,
+    'left': '',
+    'left-mid': '─',
+    'mid': '─',
     'mid-mid': '',
-    'right': '' ,
-    'right-mid': '─' ,
+    'right': '',
+    'right-mid': '─',
     'middle': '',
   },
 });
@@ -59,20 +59,20 @@ function getFilter(type = 'due') {
       return x => x.isCompleted || !x.isDue;
     }
 
-    default: throw new Error(`filter '${type}' not supported`)
+    default: throw new Error(`filter '${type}' not supported`);
   }
 }
 
 const shouldShowCompletedColumn = (task, filterType) => (
   (isTodo(task) && filterType === 'all') ||
   (isDaily(task) && filterType === 'all')
-)
+);
 
 export function tasks(taskList, filterType) {
   const table = makeTable({});
   const taskFilter = getFilter(filterType);
 
-  taskList.filter(taskFilter).forEach(task => {
+  taskList.filter(taskFilter).forEach((task) => {
     const row = [];
     row.push(task.shortId);
 
@@ -80,7 +80,7 @@ export function tasks(taskList, filterType) {
       row.push(task.isCompleted ? 'X' : ' ');
     }
     row.push(withEmojis(task.label));
-    table.push(row)
+    table.push(row);
   });
 
   if (table.length === 0) {
@@ -105,7 +105,7 @@ export function statsDiff(before, after) {
 
   R.forEachObjIndexed((delta, key) => {
     if (delta !== 0) {
-      str.push(`${delta > 0 ? '+' : ''}${pp(delta)} ${key}`)
+      str.push(`${delta > 0 ? '+' : ''}${pp(delta)} ${key}`);
     }
   }, deltas);
 
@@ -152,11 +152,11 @@ function questProgress(progress) {
       `${progress.boss}
 ${progress.health} / ${progress.maxHealth}`
     );
-  } else {
-    return progress.map(x => (
-      `${x.collected} / ${x.toCollect} ${x.label}`
-    )).join('\n');
   }
+
+  return progress.map(x => (
+    `${x.collected} / ${x.toCollect} ${x.label}`
+  )).join('\n');
 }
 
 export function quest(questDetails) {

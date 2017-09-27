@@ -1,5 +1,6 @@
 import R from 'ramda';
 import { request, url } from './api';
+
 const mapIndexed = R.addIndex(R.map);
 
 export const DIFFICULTIES = {
@@ -34,7 +35,7 @@ function getFromCache(type) {
     case TYPES.TODOS: {
       return [].concat(
         cache.get(TYPES.TODOS),
-        cache.get(TYPES.COMPLETED)
+        cache.get(TYPES.COMPLETED),
       ).filter(R.identity);
     }
     default: {
@@ -101,7 +102,7 @@ export async function getAllTodos() {
   return todos.concat(completed);
 }
 
-export async function newTask({
+export async function create({
   type,
   title,
   notes,

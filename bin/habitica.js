@@ -1,4 +1,5 @@
 #!/usr/bin/env node
 require('babel-polyfill');
-const cli = require('../lib/cli');
-cli.run();
+const run = require('../lib/cli').default;
+
+run();

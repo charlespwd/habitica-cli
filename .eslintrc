@@ -1,0 +1,9 @@
+{
+  "extends": "airbnb",
+  "rules": {
+    "no-mixed-operators": 0,
+    "no-restricted-syntax": 0,
+    "quote-props": 0,
+    "quotes": 0
+  }
+}

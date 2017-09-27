@@ -1,14 +1,17 @@
-import * as tasks from './tasks';
-import * as user from './user';
-import * as gear from './gear';
-import * as format from './format';
+import * as tasks from '../tasks';
+import * as user from '../user';
+import * as gear from '../gear';
+import * as format from '../format';
 import {
   log,
   setLogger,
-} from './utils';
+} from '../utils';
+import * as score from './score';
+import * as create from './create';
+
+const vorpal = require('vorpal');
 
 const TYPES = tasks.TYPES;
-const vorpal = require('vorpal');
 const cli = vorpal();
 
 cli.command('status', 'List your stats.')
@@ -35,19 +38,11 @@ cli.command('habits list', 'List your habits.')
 cli.command('habits score [ids...]', 'Score one or multiple habits.')
   .alias('hs')
   .option('-d, --down', 'Score a habit down.')
-  .action(async (args, callback) => {
-    const stats = await user.stats();
-    const scores = await tasks.scoreTasks({
-      type: TYPES.HABITS,
-      ids: args.ids || [],
-      direction: args.options.down ? 'down' : 'up',
-    });
-    const afterStats = await user.stats();
+  .action(score.habits);
 
-    log(format.statsDiff(stats, afterStats));
-
-    callback();
-  });
+cli.command('habits add', 'Create a new habit.')
+  .alias('new habit')
+  .action(create.habit);
 
 cli.command('dailies list', 'List your dailies.')
   .alias('dailies')
@@ -68,20 +63,7 @@ cli.command('dailies complete [ids...]', 'Complete one or multiple dailies.')
   .alias('dc')
   .alias('ds')
   .option('-d, --down', 'Undo a complete action on a task.')
-  .action(async (args, callback) => {
-    const stats = await user.stats();
-    const scores = await tasks.scoreTasks({
-      type: TYPES.DAILIES,
-      ids: args.ids || [],
-      direction: args.options.down ? 'down' : 'up',
-    });
-    const afterStats = await user.stats();
-
-    log(format.statsDiff(stats, afterStats));
-    log(format.scores(scores));
-
-    callback();
-  });
+  .action(score.dailies);
 
 cli.command('todos list', 'List your todos.')
   .alias('todos')
@@ -98,46 +80,7 @@ cli.command('todos add', 'Create a new task.')
   .alias('new todo')
   .alias('ta')
   .option('-m, --message [message]', 'Use the given [message] as todo title and skip the prompt.')
-  .action(async function addTodo(args, callback) {
-    const message = args.options.message;
-    if (message) {
-      const answer = await this.prompt([{
-        type: 'confirm',
-        name: 'confirm',
-        message: `Are you sure you want to create a new todo with title = '${message}'`
-      }]);
-
-      if (answer.confirm) {
-        await tasks.newTask({
-          type: TYPES.TODO,
-          title: message,
-        });
-        log('Success!');
-      }
-
-    } else {
-      const answers = await this.prompt([{
-        type: 'input',
-        name: 'title',
-        message: 'What should we call it? ',
-        validate(input) {
-          return input !== '';
-        },
-      }, {
-        type: 'input',
-        name: 'notes',
-        message: `Any notes? `,
-      }]);
-      const result = await tasks.newTask({
-        type: TYPES.TODO,
-        title: answers.title,
-        notes: answers.notes,
-      });
-      log('Success!');
-    }
-
-    callback();
-  })
+  .action(create.todo);
 
 cli.command('todos complete [ids...]', 'Score one or multiple habits.')
   .alias('todos score')
@@ -145,20 +88,7 @@ cli.command('todos complete [ids...]', 'Score one or multiple habits.')
   .alias('ts')
   .option('-u, --undo', 'Uncomplete a todo.')
   .option('-d, --down', 'Uncomplete a todo. (alias)')
-  .action(async (args, callback) => {
-    const stats = await user.stats();
-    const isDown = args.options.undo || args.options.down;
-    const scores = await tasks.scoreTasks({
-      type: TYPES.TODOS,
-      ids: args.ids || [],
-      direction: isDown ? 'down' : 'up',
-    });
-    const afterStats = await user.stats();
-
-    log(format.statsDiff(stats, afterStats));
-
-    callback();
-  });
+  .action(score.todos);
 
 cli.command('rewards', 'List available gear for purchase.')
   .action(async (args, callback) => {
@@ -167,19 +97,19 @@ cli.command('rewards', 'List available gear for purchase.')
     log(format.gear(items));
 
     callback();
-  })
+  });
 
 cli.command('quest', 'List current quest details.')
   .action(async (args, callback) => {
     const questDetails = await user.quest();
-    log(format.quest(questDetails))
+    log(format.quest(questDetails));
     callback();
   });
 
-export async function run() {
+export default async function run() {
   setLogger(cli.log.bind(cli));
   const stats = await user.stats();
-  log(`Welcome back ${stats.userName}!`)
+  log(`Welcome back ${stats.userName}!`);
   cli.delimiter('habitica $ ')
     .history('habitica-cli')
     .show();
