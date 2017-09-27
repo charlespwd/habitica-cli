@@ -76,6 +76,7 @@ cli.command('dailies complete [ids...]', 'Complete one or multiple dailies.')
     const afterStats = await user.stats();
 
     log(format.statsDiff(stats, afterStats));
+    log(format.scores(scores));
 
     callback();
   });
@@ -111,7 +112,7 @@ cli.command('todos complete [ids...]', 'Score one or multiple habits.')
     callback();
   });
 
-cli.command('gear', 'List available gear for purchase.')
+cli.command('rewards', 'List available gear for purchase.')
   .action(async (args, callback) => {
     const items = await gear.getBuyItems();
 

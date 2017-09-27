@@ -80,6 +80,7 @@ function scoreResult(data) {
     mana: data.mp,
     experience: data.exp,
     gold: data.gp,
+    drop: R.path(['_tmp', 'drop', 'dialog'], data),
   };
 }
 
