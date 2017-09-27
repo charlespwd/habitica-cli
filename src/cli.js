@@ -48,7 +48,8 @@ cli.command('habits score [ids...]', 'Score one or multiple habits.')
     callback();
   });
 
-cli.command('dailies', 'List your dailies.')
+cli.command('dailies list', 'List your dailies.')
+  .alias('dailies')
   .alias('d')
   .option('-f, --filter [filter]', 'List filter type (all | due | grey).', ['due', 'all', 'grey'])
   .action(async (args, callback) => {
@@ -81,7 +82,8 @@ cli.command('dailies complete [ids...]', 'Complete one or multiple dailies.')
     callback();
   });
 
-cli.command('todos', 'List your todos.')
+cli.command('todos list', 'List your todos.')
+  .alias('todos')
   .alias('t')
   .option('-f, --filter [filter]', 'List filter type (all | dated | completed).', ['all', 'dated', 'completed'])
   .action(async (args, callback) => {
@@ -90,6 +92,51 @@ cli.command('todos', 'List your todos.')
     log(format.tasks(todos, filter));
     callback();
   });
+
+cli.command('todos add', 'Create a new task.')
+  .alias('new todo')
+  .alias('ta')
+  .option('-m, --message [message]', 'Use the given [message] as todo title and skip the prompt.')
+  .action(async function addTodo(args, callback) {
+    const message = args.options.message;
+    if (message) {
+      const answer = await this.prompt([{
+        type: 'confirm',
+        name: 'confirm',
+        message: `Are you sure you want to create a new todo with title = '${message}'`
+      }]);
+
+      if (answer.confirm) {
+        await tasks.newTask({
+          type: TYPES.TODO,
+          title: message,
+        });
+        log('Success!');
+      }
+
+    } else {
+      const answers = await this.prompt([{
+        type: 'input',
+        name: 'title',
+        message: 'What should we call it? ',
+        validate(input) {
+          return input !== '';
+        },
+      }, {
+        type: 'input',
+        name: 'notes',
+        message: `Any notes? `,
+      }]);
+      const result = await tasks.newTask({
+        type: TYPES.TODO,
+        title: answers.title,
+        notes: answers.notes,
+      });
+      log('Success!');
+    }
+
+    callback();
+  })
 
 cli.command('todos complete [ids...]', 'Score one or multiple habits.')
   .alias('todos score')

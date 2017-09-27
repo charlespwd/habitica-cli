@@ -2,19 +2,46 @@ import R from 'ramda';
 import { request, url } from './api';
 const mapIndexed = R.addIndex(R.map);
 
+export const DIFFICULTIES = {
+  TRIVIAL: '0.1',
+  EASY: '1',
+  MEDIUM: '1.5',
+  HARD: '2',
+};
+
+export const TYPES = {
+  DAILY: 'daily',
+  HABIT: 'habit',
+  REWARD: 'reward',
+  TODO: 'todo',
+
+  COMPLETED: 'completedTodos',
+  DAILIES: 'dailys',
+  HABITS: 'habits',
+  REWARDS: 'rewards',
+  TODOS: 'todos',
+};
+
 // We hold a cache so that the shortIds remain consistent with what was
 // displayed on the screen. Otherwise someone might score task with index 1
 // and then score the one with index 3 instead of the one with index 2
 // because everything got shifted.
 const cache = new Map(); // <TYPE, TASKS>
 
-export const TYPES = {
-  DAILIES: 'dailys',
-  HABITS: 'habits',
-  TODOS: 'todos',
-  REWARDS: 'rewards',
-  COMPLETED: 'completedTodos',
-};
+function getFromCache(type) {
+  switch (type) {
+    case TYPES.COMPLETED:
+    case TYPES.TODOS: {
+      return [].concat(
+        cache.get(TYPES.TODOS),
+        cache.get(TYPES.COMPLETED)
+      ).filter(R.identity);
+    }
+    default: {
+      return cache.get(type) || [];
+    }
+  }
+}
 
 const toTask = ({ idPrefix }) => (task, i) => ({
   id: task.id,
@@ -74,6 +101,29 @@ export async function getAllTodos() {
   return todos.concat(completed);
 }
 
+export async function newTask({
+  type,
+  title,
+  notes,
+  difficulty = DIFFICULTIES.EASY,
+  down = true,
+  up = true,
+}) {
+  return await request(url('tasks/user'), {
+    method: 'POST',
+    body: {
+      type,
+      notes,
+      text: title,
+      priority: difficulty,
+
+      // only valid for habits, ignored otherwise
+      up,
+      down,
+    }
+  });
+}
+
 function scoreResult(data) {
   return {
     health: data.hp,
@@ -94,21 +144,6 @@ export async function scoreTask({ id, direction = 'up' }) {
   });
 
   return scoreResult(data);
-}
-
-function getFromCache(type) {
-  switch (type) {
-    case TYPES.COMPLETED:
-    case TYPES.TODOS: {
-      return [].concat(
-        cache.get(TYPES.TODOS),
-        cache.get(TYPES.COMPLETED)
-      ).filter(R.identity);
-    }
-    default: {
-      return cache.get(type) || [];
-    }
-  }
 }
 
 export async function scoreTasks({ type, ids, direction = 'up' }) {
