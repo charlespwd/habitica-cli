@@ -105,7 +105,6 @@ export async function quest() {
     ]);
     const quest = group.quest;
     const questDetails = content.quests[quest.key];
-    console.log(questDetails);
     state.questDetails = toQuestDetails(quest, questDetails);
   }
 
