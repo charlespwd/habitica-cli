@@ -1,6 +1,6 @@
 {
   "name": "habitica-cli",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "A better habitica command line interface",
   "author": "Charles-Philippe Clermont @charlespwd",
   "main": "index.js",
