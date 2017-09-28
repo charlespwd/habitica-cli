@@ -95,12 +95,10 @@ cli.command('todos complete [ids...]', 'Score one or multiple habits.')
   .option('-d, --down', 'Uncomplete a todo. (alias)')
   .action(score.todos);
 
-cli.command('rewards', 'List available gear for purchase.')
+cli.command('shop', 'List available gear for purchase.')
   .action(async (args, callback) => {
     const items = await gear.getBuyItems();
-
     log(format.gear(items));
-
     callback();
   });
 
@@ -111,9 +109,20 @@ cli.command('quest', 'List current quest details.')
     callback();
   });
 
+cli.command('sync', 'Runs cron.')
+  .alias('cron')
+  .action(async (args, callback) => {
+    await user.cron();
+    log('Success!');
+    callback();
+  });
+
 export default async function run() {
   setLogger(cli.log.bind(cli));
-  const stats = await user.stats();
+  const [stats] = await Promise.all([
+    user.stats(),
+    user.cron(),
+  ]);
   log(`Welcome back ${stats.userName}!`);
   cli.delimiter('habitica $ ')
     .history('habitica-cli')

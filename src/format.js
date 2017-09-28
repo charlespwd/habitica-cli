@@ -8,7 +8,7 @@ function pp(n) {
 }
 
 const twoCharacterEmojis = new RegExp([
-  ':heart',
+  ':heart:',
   ':recycle:',
   '☢️ ️',
   ':arrow_up_right:',

@@ -23,7 +23,7 @@ function toStats({ stats, profile }) {
 export async function stats() {
   const data = await getUserData();
   return toStats(data);
-};
+}
 
 function toBossQuestProgress(quest, questDetails) {
   return {
@@ -70,7 +70,7 @@ const getContent = R.memoize(() => request(url('content')));
 const getPartyId = R.memoize(async () => {
   const group = await request(url('groups', {
     type: 'party',
-  }))
+  }));
 
   return R.path(['id'], R.head(group));
 });
@@ -84,4 +84,12 @@ export async function quest() {
   const quest = group.quest;
   const questDetails = content.quests[quest.key];
   return toQuestDetails(quest, questDetails);
+}
+
+export async function cron() {
+  const result = await request(url('cron'), {
+    method: 'POST',
+  });
+
+  return result;
 }

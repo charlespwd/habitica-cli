@@ -1,6 +1,7 @@
 {
   "extends": "airbnb",
   "rules": {
+    "no-shadow": 0,
     "no-mixed-operators": 0,
     "no-restricted-syntax": 0,
     "no-use-before-define": 0,
