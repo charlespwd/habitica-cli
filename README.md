@@ -106,7 +106,7 @@ For more in-depth examples of every single commands, [you can check out the Wiki
 
 ## Contributing
 
-Help and PR's is happily welcome :)
+Help and PR's are extremely welcome :)
 
 ## License
 
