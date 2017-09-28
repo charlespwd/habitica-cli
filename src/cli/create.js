@@ -24,12 +24,14 @@ export async function todo(args, callback) {
     const answers = await this.prompt([
       questions.title,
       questions.notes,
+      questions.difficulty,
     ]);
 
     await tasks.create({
       type: TYPES.TODO,
       title: answers.title,
       notes: answers.notes,
+      difficulty: DIFFICULTIES[answers.difficulty],
     });
 
     log('Success!');
