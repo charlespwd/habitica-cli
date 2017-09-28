@@ -7,48 +7,48 @@ import {
 
 const TYPES = tasks.TYPES;
 
-export async function habits(args, callback) {
-  const stats = await user.stats();
+async function scoreAndLogTask({ type, ids = [], isDown = false }) {
+  const [stats, questDetails] = await Promise.all([
+    user.stats(),
+    user.quest(),
+  ]);
   const scores = await tasks.scoreTasks({
-    type: TYPES.HABITS,
-    ids: args.ids || [],
-    direction: args.options.down ? 'down' : 'up',
-  });
-  const afterStats = await user.stats();
-
-  log(format.statsDiff(stats, afterStats));
-  log(format.scores(scores));
-
-  callback();
-}
-
-export async function dailies(args, callback) {
-  const stats = await user.stats();
-  const scores = await tasks.scoreTasks({
-    type: TYPES.DAILIES,
-    ids: args.ids || [],
-    direction: args.options.down ? 'down' : 'up',
-  });
-  const afterStats = await user.stats();
-
-  log(format.statsDiff(stats, afterStats));
-  log(format.scores(scores));
-
-  callback();
-}
-
-export async function todos(args, callback) {
-  const stats = await user.stats();
-  const isDown = args.options.undo || args.options.down;
-  const scores = await tasks.scoreTasks({
-    type: TYPES.TODOS,
-    ids: args.ids || [],
+    type,
+    ids,
     direction: isDown ? 'down' : 'up',
   });
   const afterStats = await user.stats();
 
   log(format.statsDiff(stats, afterStats));
-  log(format.scores(scores));
+  log(format.scores(scores, questDetails));
+}
+
+export async function habits(args, callback) {
+  await scoreAndLogTask({
+    type: TYPES.HABIT,
+    ids: args.ids,
+    isDown: args.options.down,
+  });
+
+  callback();
+}
+
+export async function dailies(args, callback) {
+  await scoreAndLogTask({
+    type: TYPES.DAILIES,
+    ids: args.ids,
+    isDown: args.options.down,
+  });
+
+  callback();
+}
+
+export async function todos(args, callback) {
+  await scoreAndLogTask({
+    type: TYPES.TODOS,
+    ids: args.ids,
+    isDown: args.options.undo || args.options.down,
+  });
 
   callback();
 }

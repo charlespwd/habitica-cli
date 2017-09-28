@@ -155,6 +155,8 @@ function scoreResult(data) {
     experience: data.exp,
     gold: data.gp,
     drop: R.path(['_tmp', 'drop', 'dialog'], data),
+    collected: R.path(['_tmp', 'quest', 'collection'], data),
+    damage: R.path(['_tmp', 'quest', 'progressDelta'], data),
   };
 }
 
@@ -180,16 +182,15 @@ export async function scoreTasks({ type, ids, direction = 'up' }) {
   // Doing sequentially because the API can't handle the load.
   const scores = [];
   for (const id of taskIds) {
-    scores.push(
-      await scoreTask({ id, direction })
-    );
+    const score = await scoreTask({ id, direction }); // eslint-disable-line no-await-in-loop
+    scores.push(score);
   }
 
   // we need to mutate the cache to prevent double spends because somehow
   // the backend doesn't prevent it!
   scoredTasks.forEach((task) => {
-    task.isCompleted = !task.isCompleted;
-    task.isDue = !task.isDue;
+    task.isCompleted = !task.isCompleted; // eslint-disable-line no-param-reassign
+    task.isDue = !task.isDue; // eslint-disable-line no-param-reassign
   });
 
   return scores;

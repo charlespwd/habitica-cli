@@ -1,6 +1,15 @@
 import R from 'ramda';
 import { request, url } from './api';
 
+const state = {
+  questDetails: null,
+};
+
+export const QUEST_TYPES = {
+  COLLECT: 'collect',
+  BOSS: 'boss',
+};
+
 function getUserData() {
   return request(url('user'));
 }
@@ -46,14 +55,26 @@ function toCollectQuestProgress(quest, questDetails) {
   )(questDetails);
 }
 
+const getQuestType = (questDetails) => {
+  if (!questDetails) {
+    return undefined;
+  } else if (questDetails.boss) {
+    return QUEST_TYPES.BOSS;
+  } else if (questDetails.collect) {
+    return QUEST_TYPES.COLLECT;
+  }
+  throw new Error(`Can't figure out quest type for ${JSON.stringify(questDetails)}`);
+};
+
 function toQuestDetails(quest, questDetails) {
-  const type = questDetails.boss ? 'boss' : 'collect';
-  const progress = type === 'boss'
+  const type = getQuestType(questDetails);
+  const progress = type === QUEST_TYPES.BOSS
     ? toBossQuestProgress(quest, questDetails)
     : toCollectQuestProgress(quest, questDetails);
   return {
     type,
     progress,
+    isActive: quest.active,
     label: questDetails.text,
     description: questDetails.notes,
     completed: !!quest.completed,
@@ -76,20 +97,27 @@ const getPartyId = R.memoize(async () => {
 });
 
 export async function quest() {
-  const partyId = await getPartyId();
-  const [content, group] = await Promise.all([
-    getContent(),
-    request(url(`groups/${partyId}`)),
-  ]);
-  const quest = group.quest;
-  const questDetails = content.quests[quest.key];
-  return toQuestDetails(quest, questDetails);
+  if (!state.questDetails) {
+    const partyId = await getPartyId();
+    const [content, group] = await Promise.all([
+      getContent(),
+      request(url(`groups/${partyId}`)),
+    ]);
+    const quest = group.quest;
+    const questDetails = content.quests[quest.key];
+    console.log(questDetails);
+    state.questDetails = toQuestDetails(quest, questDetails);
+  }
+
+  return state.questDetails;
 }
 
 export async function cron() {
   const result = await request(url('cron'), {
     method: 'POST',
   });
+
+  state.questDetails = null;
 
   return result;
 }

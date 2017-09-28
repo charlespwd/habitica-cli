@@ -2,6 +2,7 @@ import R from 'ramda';
 import emoji from 'node-emoji';
 import Table from 'cli-table';
 import { capitalize } from './utils';
+import { QUEST_TYPES } from './user';
 
 function pp(n) {
   return n.toFixed(2);
@@ -150,7 +151,7 @@ function questProgress(progress) {
   if (progress.boss) {
     return (
       `${progress.boss}
-${progress.health} / ${progress.maxHealth}`
+${progress.health || progress.maxHealth} / ${progress.maxHealth}`
     );
   }
 
@@ -169,10 +170,32 @@ ${questProgress(questDetails.progress)}
 `;
 }
 
-export function scores(scoresData) {
-  return R.pipe(
+export function scores(scoresData, questDetails) {
+  const type = questDetails.type;
+  const isQuestActive = questDetails.isActive;
+  const isBossQuest = isQuestActive && type === QUEST_TYPES.BOSS;
+  const isCollectQuest = isQuestActive && type === QUEST_TYPES.COLLECT;
+
+  const drops = R.pipe(
     R.filter(R.prop('drop')),
-    R.map(score => score.drop),
-    R.join('\n'),
+    R.map(R.prop('drop')),
   )(scoresData);
+
+  const collected = R.pipe(
+    R.filter(R.prop('collected')),
+    R.map(R.prop('collected')),
+    R.sum,
+  )(scoresData);
+  const collectedText = isCollectQuest && `+${collected} quest item(s) found!`;
+
+  const damage = R.pipe(
+    R.filter(R.prop('damage')),
+    R.map(R.prop('damage')),
+    R.sum,
+  );
+  const damageText = isBossQuest && `+${damage.toFixed(1)} damage to boss!`;
+
+  return [].concat(drops, collectedText, damageText)
+    .filter(R.identity)
+    .join('\n');
 }
