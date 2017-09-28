@@ -3,6 +3,11 @@
   "version": "1.1.0",
   "description": "An immersive command line interface for Habitica",
   "author": "Charles-Philippe Clermont @charlespwd",
+  "keywords": [
+    "habitica",
+    "todo",
+    "cli"
+  ],
   "main": "index.js",
   "bin": {
     "habitica": "bin/habitica.js"
