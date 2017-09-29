@@ -1,3 +1,4 @@
+import colors from 'colors/safe';
 import * as tasks from '../tasks';
 import * as user from '../user';
 import * as rewards from '../rewards';
@@ -121,8 +122,27 @@ cli.command('todos delete [ids...]', 'Delete todos.')
 
 cli.command('shop', 'List available rewards for purchase.')
   .action(async (args, callback) => {
-    const items = await rewards.getBuyItems();
+    const [items, stats] = await Promise.all([
+      rewards.getBuyItems(),
+      user.stats(),
+    ]);
     log(format.rewards(items));
+    const gold = Math.floor(stats.gold);
+    const silver = (stats.gold - gold) * 100;
+    log(`  You have ${colors.yellow(gold.toFixed(0))}${colors.yellow(' GP')} and ${colors.grey(silver.toFixed(0))}${colors.grey(' silver')}.\n`);
+    callback();
+  });
+
+cli.command('buy [itemName...]', 'Buy a reward by name.')
+  .action(async (args, callback) => {
+    const shortId = args.itemName.join(' ');
+    try {
+      const message = await rewards.buyGear({ shortId });
+      log(message);
+    } catch (e) {
+      log(e.message);
+    }
+
     callback();
   });
 

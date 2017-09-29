@@ -1,4 +1,9 @@
+import R from 'ramda';
 import { request, url } from './api';
+
+const cache = {
+  gear: null,
+};
 
 function toShortId(text) {
   return text.replace(/ /g, '_').toLowerCase();
@@ -22,5 +27,23 @@ function toGearItem(item) {
 
 export async function getBuyItems() {
   const data = await request(url('user/inventory/buy'));
-  return data.map(toGearItem);
+  cache.gear = data.map(toGearItem);
+  return cache.gear;
+}
+
+const findGearByShortId = (shortId, gear = cache.gear) => R.find(
+  item => item.shortId === shortId,
+  gear,
+);
+
+export async function buyGear({ shortId }) {
+  if (!cache.gear) await getBuyItems();
+  const item = findGearByShortId(toShortId(shortId));
+  if (!item) throw new Error(`${shortId} does not exist.`);
+
+  const result = await request(url(`user/buy-gear/${item.id}`), {
+    method: 'POST',
+  });
+
+  return result._meta; // eslint-disable-line no-underscore-dangle
 }

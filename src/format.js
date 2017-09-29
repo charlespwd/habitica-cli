@@ -1,6 +1,7 @@
 import R from 'ramda';
 import emoji from 'node-emoji';
 import Table from 'cli-table';
+import colors from 'colors/safe';
 import { capitalize } from './utils';
 import { QUEST_TYPES } from './user';
 
@@ -127,7 +128,7 @@ GOLD: ${pp(statsData.gold)}
 `;
 }
 
-export function gear(items) {
+export function rewards(items) {
   const table = makeTable({
     head: ['Price', 'Name', 'STR', 'CON', 'INT', 'PER'],
     colAligns: ['right', 'left', 'right', 'right', 'right', 'right'],
@@ -135,7 +136,7 @@ export function gear(items) {
 
   for (const item of R.sortBy(R.prop('label'), items)) {
     table.push([
-      `${item.price} GP`,
+      colors.yellow(`${item.price} GP`),
       item.label,
       item.stats.str,
       item.stats.con,

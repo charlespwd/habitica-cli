@@ -23,12 +23,26 @@ async function makeRequest(url, params = {}) {
     },
   });
 
-  const response = await request(url, options);
-  if (!response.success) {
-    throw new Error(response.data);
-  }
+  try {
+    const response = await request(url, options);
 
-  return response.data;
+    if (!response.success) {
+      throw new Error(response.message);
+    }
+
+    const data = response.data;
+    Object.defineProperty(data, '__meta', {
+      enumerable: false,
+      value: response.message,
+    });
+
+    return data;
+  } catch (e) {
+    if (e.statusCode >= 400 && e.statusCode < 500) {
+      throw new Error(e.error.message);
+    }
+    throw e;
+  }
 }
 
 export { makeRequest as request };
