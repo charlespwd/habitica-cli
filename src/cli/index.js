@@ -1,6 +1,6 @@
 import * as tasks from '../tasks';
 import * as user from '../user';
-import * as gear from '../gear';
+import * as rewards from '../rewards';
 import * as format from '../format';
 import {
   log,
@@ -119,10 +119,10 @@ cli.command('todos delete [ids...]', 'Delete todos.')
   .alias('td')
   .action(destroy.todos);
 
-cli.command('shop', 'List available gear for purchase.')
+cli.command('shop', 'List available rewards for purchase.')
   .action(async (args, callback) => {
-    const items = await gear.getBuyItems();
-    log(format.gear(items));
+    const items = await rewards.getBuyItems();
+    log(format.rewards(items));
     callback();
   });
 

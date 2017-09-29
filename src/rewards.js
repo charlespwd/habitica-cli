@@ -1,4 +1,3 @@
-import R from 'ramda';
 import { request, url } from './api';
 
 function toShortId(text) {

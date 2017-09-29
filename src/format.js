@@ -151,7 +151,7 @@ function questProgress(progress) {
   if (progress.boss) {
     return (
       `${progress.boss}
-${progress.health || progress.maxHealth} / ${progress.maxHealth}`
+${progress.health.toFixed(0) || progress.maxHealth} / ${progress.maxHealth}`
     );
   }
 
