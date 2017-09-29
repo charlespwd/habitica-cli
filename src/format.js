@@ -192,7 +192,7 @@ export function scores(scoresData, questDetails) {
     R.filter(R.prop('damage')),
     R.map(R.prop('damage')),
     R.sum,
-  );
+  )(scoresData);
   const damageText = isBossQuest && `+${damage.toFixed(1)} damage to boss!`;
 
   return [].concat(drops, collectedText, damageText)
