@@ -59,6 +59,16 @@ function getFromCache(type) {
   }
 }
 
+function getTasksByTypeAndShortId(type, ids = []) {
+  const tasks = getFromCache(type);
+  return ids
+    .map(id => R.find(
+      task => task.shortId === id.toString(),
+      tasks,
+    ))
+    .filter(R.pipe(R.isNil, R.not));
+}
+
 const toTask = ({ idPrefix }) => (task, i) => ({
   id: task.id,
   shortId: idPrefix + i,
@@ -148,6 +158,33 @@ export function create({
   });
 }
 
+export function destroyTask({ id }) {
+  return request(url(`tasks/${id}`), {
+    method: 'DELETE',
+  });
+}
+
+export async function destroyTasks({ type, ids }) {
+  const tasks = getTasksByTypeAndShortId(type, ids);
+  const taskIds = tasks.map(R.prop('id'));
+
+  // Doing sequentially because the API can't handle the load.
+  const results = [];
+  for (const id of taskIds) {
+    const result = await destroyTask({ id }); // eslint-disable-line no-await-in-loop
+    results.push(result);
+  }
+
+  const cache = getFromCache(type);
+
+  // we need to mutate the cache to prevent double delete.
+  tasks.forEach((task) => {
+    cache.splice(cache.indexOf(task), 1);
+  });
+
+  return results;
+}
+
 function scoreResult(data) {
   return {
     health: data.hp,
@@ -173,11 +210,9 @@ export async function scoreTask({ id, direction = 'up' }) {
 }
 
 export async function scoreTasks({ type, ids, direction = 'up' }) {
-  const tasks = getFromCache(type);
-  const scoredTasks = ids.map(id => R.find(task => task.shortId === id.toString(), tasks))
-    .filter(R.identity)
+  const scoredTasks = getTasksByTypeAndShortId(type, ids)
     .filter(x => (direction === 'up' ? !x.isCompleted : x.isCompleted));
-  const taskIds = scoredTasks.map(x => x.id);
+  const taskIds = scoredTasks.map(R.prop('id'));
 
   // Doing sequentially because the API can't handle the load.
   const scores = [];

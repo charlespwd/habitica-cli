@@ -8,6 +8,7 @@ import {
 } from '../utils';
 import * as score from './score';
 import * as create from './create';
+import * as destroy from './destroy';
 
 const vorpal = require('vorpal');
 
@@ -42,7 +43,15 @@ cli.command('habits score [ids...]', 'Score one or multiple habits.')
 
 cli.command('habits add', 'Create a new habit.')
   .alias('new habit')
+  .alias('ha')
   .action(create.habit);
+
+cli.command('habits delete [ids...]', 'Delete habits.')
+  .alias('habit delete')
+  .alias('destroy habit')
+  .alias('destroy habits')
+  .alias('hd')
+  .action(destroy.habits);
 
 cli.command('dailies list', 'List your dailies.')
   .alias('dailies')
@@ -68,7 +77,15 @@ cli.command('dailies complete [ids...]', 'Complete one or multiple dailies.')
 cli.command('dailies add', 'Create a new habit.')
   .alias('new dailies')
   .alias('new daily')
+  .alias('da')
   .action(create.daily);
+
+cli.command('dailies delete [ids...]', 'Delete dailies.')
+  .alias('daily delete')
+  .alias('destroy dailies')
+  .alias('destroy daily')
+  .alias('dd')
+  .action(destroy.dailies);
 
 cli.command('todos list', 'List your todos.')
   .alias('todos')
@@ -94,6 +111,13 @@ cli.command('todos complete [ids...]', 'Score one or multiple habits.')
   .option('-u, --undo', 'Uncomplete a todo.')
   .option('-d, --down', 'Uncomplete a todo. (alias)')
   .action(score.todos);
+
+cli.command('todos delete [ids...]', 'Delete todos.')
+  .alias('todo delete')
+  .alias('destroy todos')
+  .alias('destroy todo')
+  .alias('td')
+  .action(destroy.todos);
 
 cli.command('shop', 'List available gear for purchase.')
   .action(async (args, callback) => {
