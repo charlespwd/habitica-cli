@@ -11,9 +11,10 @@ An immersive command line interface for [Habitica](https://habitica.com) which f
 Built on top of [vorpal](https://github.com/dthree/vorpal), this Habitica CLI is an interactive one that provides an array of functionality including the following:
 
 * [x] Built-in emoji support :fire::zap:
-* [x] Listing habits, tasks and todos
+* [x] Listing, scoring, creating, deleting habits, tasks and todos
 * [x] Scoring habits, tasks and todos
-* [x] Creating habits, tasks and todos
+* [x] Creating/Deleting habits, tasks and todos
+* [x] Fighting bosses
 * [x] Showing quest progress
 * [x] Command history
 * [x] Tab completion
