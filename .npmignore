@@ -1,3 +1,5 @@
 src
+.eslintrc
 .babelrc
 nodemon.json
+img
