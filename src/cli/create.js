@@ -5,6 +5,7 @@ import { log } from '../utils';
 const DAYS = tasks.DAYS;
 const TYPES = tasks.TYPES;
 const DIFFICULTIES = tasks.DIFFICULTIES;
+const FREQUENCIES = tasks.FREQUENCIES;
 
 export async function todo(args, callback) {
   const message = args.options.message;
@@ -88,7 +89,7 @@ export async function daily(args, callback) {
     title: answers.title,
     notes: answers.notes,
     difficulty: DIFFICULTIES[answers.difficulty],
-    frequency: answers.frequency,
+    frequency: FREQUENCIES[answers.frequency],
     everyX: answers.everyX,
     repeat: convertRepeat(answers.repeat),
   });
