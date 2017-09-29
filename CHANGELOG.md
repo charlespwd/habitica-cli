@@ -1,4 +1,12 @@
 
+1.2.0 / 2017-09-29
+==================
+
+  * Add 'delete habits', 'delete todos' and 'delete dailies'
+  * Fix frequency bug in 'new daily'
+  * Add difficulty choice to 'new todo' command
+  * Add quest progress details to scoreTask
+
 1.1.0 / 2017-09-28
 ==================
 
