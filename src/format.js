@@ -123,7 +123,7 @@ export function stats(statsData) {
 ${capitalize(statsData.class)} - Level ${statsData.level}
 HP: ${pp(statsData.health)} / ${statsData.maxHealth}
 MP: ${pp(statsData.mana)} / ${statsData.maxMana}
-XP: ${pp(statsData.experience)} / ${statsData.toNextLevel}
+XP: ${statsData.experience.toFixed(0)} / ${statsData.toNextLevel}
 GOLD: ${pp(statsData.gold)}
 `;
 }
@@ -199,4 +199,10 @@ export function scores(scoresData, questDetails) {
   return [].concat(drops, collectedText, damageText)
     .filter(R.identity)
     .join('\n');
+}
+
+export function goldBalance(stats) {
+  const gold = Math.floor(stats.gold);
+  const silver = (stats.gold - gold) * 100;
+  return `You have ${colors.yellow(gold.toFixed(0))}${colors.yellow(' GP')} and ${colors.grey(silver.toFixed(0))}${colors.grey(' silver')}.`;
 }

@@ -1,3 +1,4 @@
+import colors from 'colors/safe';
 import * as tasks from '../tasks';
 import * as user from '../user';
 import * as format from '../format';
@@ -125,6 +126,7 @@ cli.command('todos delete [ids...]', 'Delete todos.')
   .action(destroy.todos);
 
 cli.command('shop', 'List available rewards for purchase.')
+  .alias('rewards')
   .action(rewards.shop);
 
 cli.command('buy', 'Buy a reward.')
@@ -153,7 +155,7 @@ export default async function run() {
     user.cron(),
   ]);
   log(`Welcome back ${stats.userName}!`);
-  cli.delimiter('habitica $ ')
+  cli.delimiter('habitica $')
     .history('habitica-cli')
     .show();
 }
