@@ -20,11 +20,19 @@ export async function shop(args, callback) {
   callback();
 }
 
+
 export async function buy(args, callback) {
+  this.isCancelled = false;
   const items = await rewards.getRewards();
   const answers = await this.prompt([
     questions.reward(items),
   ]);
+
+  // You can cancel mid-prompt with ctrl+c
+  if (this.isCancelled) {
+    return;
+  }
+
   const shortId = R.find(
     item => format.withEmojis(item.label) === answers.reward,
     items,

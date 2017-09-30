@@ -15,6 +15,11 @@ const vorpal = require('vorpal');
 const TYPES = tasks.TYPES;
 const cli = vorpal();
 
+export function cancel() {
+  this.log('OK BOSS');
+  this.isCancelled = true;
+}
+
 cli.command('status', 'List your stats.')
   .alias('stats')
   .action(async (args, callback) => {
@@ -123,7 +128,8 @@ cli.command('shop', 'List available rewards for purchase.')
   .action(rewards.shop);
 
 cli.command('buy', 'Buy a reward.')
-  .action(rewards.buy);
+  .action(rewards.buy)
+  .cancel(cancel);
 
 cli.command('quest', 'List current quest details.')
   .action(async (args, callback) => {
