@@ -134,7 +134,7 @@ export function rewards(items) {
     colAligns: ['right', 'left', 'right', 'right', 'right', 'right'],
   });
 
-  for (const item of R.sortBy(R.prop('label'), items)) {
+  for (const item of items) {
     table.push([
       colors.yellow(`${item.price} GP`),
       withEmojis(item.label),

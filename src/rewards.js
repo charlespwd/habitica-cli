@@ -19,6 +19,28 @@ function toShortId(text) {
   return text.replace(/ /g, '_').toLowerCase();
 }
 
+const stats = (str, int, con, per) => ({ str, int, con, per });
+
+const POTION = {
+  id: REWARD_TYPES.POTION,
+  shortId: REWARD_TYPES.POTION,
+  type: REWARD_TYPES.POTION,
+  label: 'Health Potion',
+  description: 'Recover 15 Health (Instant Use)',
+  price: 25,
+  stats: stats(0, 0, 0, 0),
+};
+
+const ENCHANTED_ARMOIRE = {
+  id: REWARD_TYPES.ARMOIRE,
+  shortId: REWARD_TYPES.ARMOIRE,
+  type: REWARD_TYPES.ARMOIRE,
+  label: 'Enchanted Armoire',
+  description: 'Open the Armoire to randomly receive special Equipement, Experience, or food! Equipement pieces remaining: ???', // TODO
+  price: 100,
+  stats: stats('?', '?', '?', '?'),
+};
+
 function toGearItem(item) {
   return {
     id: item.key,
@@ -36,11 +58,6 @@ function toGearItem(item) {
   };
 }
 
-export async function getBuyItems() {
-  const data = await request(url('user/inventory/buy'));
-  return data.map(toGearItem);
-}
-
 function rewardToGearItem(reward) {
   return {
     id: reward.id,
@@ -49,13 +66,13 @@ function rewardToGearItem(reward) {
     label: reward.label,
     description: reward.notes,
     price: reward.value,
-    stats: {
-      con: 0,
-      str: 0,
-      int: 0,
-      per: 0,
-    },
+    stats: stats(0, 0, 0, 0),
   };
+}
+
+export async function getBuyItems() {
+  const data = await request(url('user/inventory/buy'));
+  return data.map(toGearItem);
 }
 
 export async function getRewards() {
@@ -66,7 +83,7 @@ export async function getRewards() {
     getBuyItems(),
   ]);
 
-  cache.rewards = rewards.map(rewardToGearItem).concat(gear);
+  cache.rewards = rewards.map(rewardToGearItem).concat(POTION, ENCHANTED_ARMOIRE, gear);
   return cache.rewards;
 }
 
