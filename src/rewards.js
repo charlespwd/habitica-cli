@@ -1,5 +1,15 @@
 import R from 'ramda';
 import { request, url } from './api';
+import * as tasks from './tasks';
+
+const { TYPES } = tasks;
+
+const REWARD_TYPES = {
+  GEAR: 'gear',
+  REWARD: 'reward',
+  POTION: 'potion',
+  ARMOIRE: 'armoire',
+};
 
 const cache = {
   gear: null,
@@ -13,6 +23,7 @@ function toGearItem(item) {
   return {
     id: item.key,
     shortId: toShortId(item.text),
+    type: REWARD_TYPES.GEAR,
     label: item.text,
     description: item.notes,
     price: item.value,
@@ -27,21 +38,54 @@ function toGearItem(item) {
 
 export async function getBuyItems() {
   const data = await request(url('user/inventory/buy'));
-  cache.gear = data.map(toGearItem);
-  return cache.gear;
+  return data.map(toGearItem);
 }
 
-const findGearByShortId = (shortId, gear = cache.gear) => R.find(
+function rewardToGearItem(reward) {
+  return {
+    id: reward.id,
+    shortId: toShortId(reward.label),
+    type: REWARD_TYPES.REWARD,
+    label: reward.label,
+    description: reward.notes,
+    price: reward.value,
+    stats: {
+      con: 0,
+      str: 0,
+      int: 0,
+      per: 0,
+    },
+  };
+}
+
+export async function getRewards() {
+  const [rewards, gear] = await Promise.all([
+    tasks.getTasks({
+      type: TYPES.REWARDS,
+    }),
+    getBuyItems(),
+  ]);
+
+  cache.rewards = rewards.map(rewardToGearItem).concat(gear);
+  return cache.rewards;
+}
+
+const findRewardByShortId = (shortId, rewards = cache.rewards) => R.find(
   item => item.shortId === shortId,
-  gear,
+  rewards,
 );
 
-export async function buyGear({ shortId }) {
-  if (!cache.gear) await getBuyItems();
-  const item = findGearByShortId(toShortId(shortId));
+export async function buyReward({ shortId }) {
+  if (!cache.rewards) await getRewards();
+  const item = findRewardByShortId(toShortId(shortId));
   if (!item) throw new Error(`${shortId} does not exist.`);
 
-  const result = await request(url(`user/buy-gear/${item.id}`), {
+  if (item.type === REWARD_TYPES.REWARD) {
+    await tasks.scoreTask({ id: item.id });
+    return `Success! Bought ${shortId} for ${item.price} GP.`;
+  }
+
+  const result = await request(url(`user/buy/${item.id}`), {
     method: 'POST',
   });
 

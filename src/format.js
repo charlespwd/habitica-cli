@@ -17,7 +17,7 @@ const twoCharacterEmojis = new RegExp([
   ':scissors:',
 ].join('|'), 'g');
 
-function withEmojis(s) {
+export function withEmojis(s) {
   return emoji.emojify(s.replace(twoCharacterEmojis, '$& '));
 }
 
@@ -137,11 +137,11 @@ export function rewards(items) {
   for (const item of R.sortBy(R.prop('label'), items)) {
     table.push([
       colors.yellow(`${item.price} GP`),
-      item.label,
-      item.stats.str,
-      item.stats.con,
-      item.stats.int,
-      item.stats.per,
+      withEmojis(item.label),
+      item.stats.str || '-',
+      item.stats.con || '-',
+      item.stats.int || '-',
+      item.stats.per || '-',
     ]);
   }
 

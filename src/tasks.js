@@ -77,6 +77,7 @@ const toTask = ({ idPrefix }) => (task, i) => ({
   label: task.text,
   isCompleted: task.completed,
   isDue: (task.type === 'todo' && !task.completed) || task.isDue,
+  value: task.value,
 });
 
 export async function getTasks({ type, idPrefix = '' }) {

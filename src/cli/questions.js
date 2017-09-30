@@ -1,3 +1,5 @@
+import R from 'ramda';
+import { withEmojis } from '../format';
 import {
   DAYS,
   DIFFICULTIES,
@@ -73,3 +75,10 @@ export const everyX = {
   },
   when: answers => answers.frequency === 'DAILY',
 };
+
+export const reward = rewards => ({
+  type: 'list',
+  name: 'reward',
+  message: 'What are you looking for? ',
+  choices: rewards.map(R.pipe(R.prop('label'), withEmojis)),
+});
