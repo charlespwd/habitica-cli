@@ -1,4 +1,12 @@
 
+1.3.0 / 2017-10-01
+==================
+
+  * Improve buy reward UX
+  * Add support for cancelling 'buy' with ctrl+c
+  * Add Potions and Enchanted Armoire to the shop
+  * Add 'buy [reward]' command
+
 1.2.0 / 2017-09-29
 ==================
 
