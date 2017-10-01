@@ -25,7 +25,7 @@ async function scoreAndLogTask({ type, ids = [], isDown = false }) {
 
 export async function habits(args, callback) {
   await scoreAndLogTask({
-    type: TYPES.HABIT,
+    type: TYPES.HABITS,
     ids: args.ids,
     isDown: args.options.down,
   });
