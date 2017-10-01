@@ -162,7 +162,7 @@ ${progress.health.toFixed(0) || progress.maxHealth} / ${progress.maxHealth}`
 }
 
 export function quest(questDetails) {
-  return `
+  return quest && `
 ${questDetails.label}
 ${R.repeat('=', questDetails.label.length).join('')}
 ${questDetails.description}
@@ -172,8 +172,8 @@ ${questProgress(questDetails.progress)}
 }
 
 export function scores(scoresData, questDetails) {
-  const type = questDetails.type;
-  const isQuestActive = questDetails.isActive;
+  const type = questDetails && questDetails.type;
+  const isQuestActive = questDetails && questDetails.isActive;
   const isBossQuest = isQuestActive && type === QUEST_TYPES.BOSS;
   const isCollectQuest = isQuestActive && type === QUEST_TYPES.COLLECT;
 

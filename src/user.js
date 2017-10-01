@@ -99,6 +99,7 @@ const getPartyId = R.memoize(async () => {
 export async function quest() {
   if (!state.questDetails) {
     const partyId = await getPartyId();
+    if (!partyId) return undefined;
     const [content, group] = await Promise.all([
       getContent(),
       request(url(`groups/${partyId}`)),

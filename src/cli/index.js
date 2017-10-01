@@ -80,7 +80,7 @@ cli.command('dailies complete [ids...]', 'Complete one or multiple dailies.')
   .option('-d, --down', 'Undo a complete action on a task.')
   .action(score.dailies);
 
-cli.command('dailies add', 'Create a new habit.')
+cli.command('dailies add', 'Create a new daily.')
   .alias('new dailies')
   .alias('new daily')
   .alias('da')

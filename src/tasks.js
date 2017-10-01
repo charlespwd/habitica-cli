@@ -46,6 +46,7 @@ const cache = new Map(); // <TYPE, TASKS>
 
 function getFromCache(type) {
   switch (type) {
+    case TYPES.TODO:
     case TYPES.COMPLETED:
     case TYPES.TODOS: {
       return [].concat(
