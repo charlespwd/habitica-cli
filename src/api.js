@@ -9,7 +9,18 @@ import { debug } from './utils';
 const BASE_URL = 'https://habitica.com/api/v3';
 const CONFIG_HOME = process.env.XDG_CONFIG_HOME || path.join(process.env.HOME, '.config');
 const CONFIG_PATH = path.join(CONFIG_HOME, 'habitica', 'auth.cfg');
-const config = ini.parse(fs.readFileSync(CONFIG_PATH, 'utf-8'));
+
+let config;
+try {
+  config = ini.parse(fs.readFileSync(CONFIG_PATH, 'utf-8'));
+} catch (e) {
+  console.log(`There seems to be a problem with your configuration file.
+Does your ${CONFIG_PATH} file exist?
+
+For more information on how to get started, see
+https://github.com/charlespwd/habitica-cli#quick-start`);
+  process.exit(1);
+}
 
 export const getUserID = () => config.Habitica.login;
 export const getApiKey = () => config.Habitica.password;
