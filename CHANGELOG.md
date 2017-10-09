@@ -1,4 +1,10 @@
 
+1.4.0 / 2017-10-09
+==================
+
+  * Add 'cast' command
+  * Add 'skills' command to list available skills
+
 1.3.0 / 2017-10-01
 ==================
 
