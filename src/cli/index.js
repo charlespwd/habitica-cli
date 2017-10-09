@@ -2,6 +2,7 @@ import colors from 'colors/safe';
 import * as tasks from '../tasks';
 import * as user from '../user';
 import * as format from '../format';
+import * as content from '../content';
 import {
   log,
   setLogger,
@@ -9,6 +10,7 @@ import {
 import * as score from './score';
 import * as create from './create';
 import * as rewards from './rewards';
+import * as skills from './skills';
 import * as destroy from './destroy';
 
 const vorpal = require('vorpal');
@@ -140,6 +142,10 @@ cli.command('quest', 'List current quest details.')
     callback();
   });
 
+cli.command('skills', 'List available skills (spells).')
+  .alias('spells')
+  .action(skills.list);
+
 cli.command('sync', 'Runs cron.')
   .alias('cron')
   .action(async (args, callback) => {
@@ -154,6 +160,8 @@ export default async function run() {
     user.stats(),
     user.cron(),
   ]);
+  // preload content.
+  content.getContent();
   log(`Welcome back ${stats.userName}!`);
   cli.delimiter('habitica $')
     .history('habitica-cli')

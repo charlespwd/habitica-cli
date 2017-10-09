@@ -4,6 +4,7 @@ import * as ini from 'ini';
 import * as fs from 'fs';
 import * as qs from 'qs';
 import * as path from 'path';
+import { debug } from './utils';
 
 const BASE_URL = 'https://habitica.com/api/v3';
 const CONFIG_HOME = process.env.XDG_CONFIG_HOME || path.join(process.env.HOME, '.config');
@@ -15,6 +16,7 @@ export const getApiKey = () => config.Habitica.password;
 export const url = (uri, options) => `${BASE_URL}/${uri}?${qs.stringify(options)}`;
 
 async function makeRequest(url, params = {}) {
+  const start = Date.now();
   const options = mergeDeepLeft(params, {
     json: true,
     headers: {
@@ -35,6 +37,9 @@ async function makeRequest(url, params = {}) {
       enumerable: false,
       value: response.message,
     });
+
+    const dtms = Date.now() - start;
+    debug(url, dtms);
 
     return data;
   } catch (e) {

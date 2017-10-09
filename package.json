@@ -37,7 +37,7 @@
   "scripts": {
     "build": "rm -rf lib && babel -d lib src",
     "prepublishOnly": "npm run build",
-    "devel": "nodemon --watch 'src/**/*.js' --ignore 'src/**/*.spec.js' --exec 'babel-node' index.js"
+    "devel": "DEBUG=true nodemon --watch 'src/**/*.js' --ignore 'src/**/*.spec.js' --exec 'babel-node' index.js"
   },
   "license": "MIT"
 }

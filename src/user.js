@@ -1,5 +1,6 @@
 import R from 'ramda';
 import { request, url } from './api';
+import { getContent } from './content';
 
 const state = {
   questDetails: null,
@@ -87,7 +88,6 @@ function toQuestDetails(quest, questDetails) {
   };
 }
 
-const getContent = R.memoize(() => request(url('content')));
 const getPartyId = R.memoize(async () => {
   const group = await request(url('groups', {
     type: 'party',

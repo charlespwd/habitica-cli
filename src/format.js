@@ -206,3 +206,19 @@ export function goldBalance(stats) {
   const silver = (stats.gold - gold) * 100;
   return `You have ${colors.yellow(gold.toFixed(0))}${colors.yellow(' GP')} and ${colors.grey(silver.toFixed(0))}${colors.grey(' silver')}.`;
 }
+
+export function skills(skills) {
+  const table = new Table({
+    head: ['MP', 'Name', 'Description'],
+  });
+
+  for (const skill of skills) {
+    table.push([
+      skill.mana,
+      skill.label,
+      skill.description,
+    ]);
+  }
+
+  return table.toString();
+}
