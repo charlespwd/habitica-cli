@@ -39,5 +39,16 @@
     "prepublishOnly": "npm run build",
     "devel": "DEBUG=true nodemon --watch 'src/**/*.js' --ignore 'src/**/*.spec.js' --exec 'babel-node' index.js"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "directories": {
+    "lib": "lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/charlespwd/habitica-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/charlespwd/habitica-cli/issues"
+  },
+  "homepage": "https://github.com/charlespwd/habitica-cli#readme"
 }
