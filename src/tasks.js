@@ -213,7 +213,7 @@ export async function scoreTask({ id, direction = 'up' }) {
 
 export async function scoreTasks({ type, ids, direction = 'up' }) {
   const scoredTasks = getTasksByTypeAndShortId(type, ids)
-    .filter(x => (direction === 'up' ? !x.isCompleted : x.isCompleted));
+    .filter(x => x.type === 'habit' || (direction === 'up' ? !x.isCompleted : x.isCompleted));
   const taskIds = scoredTasks.map(R.prop('id'));
 
   // Doing sequentially because the API can't handle the load.

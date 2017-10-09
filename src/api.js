@@ -33,7 +33,7 @@ async function makeRequest(url, params = {}) {
     }
 
     const data = response.data;
-    Object.defineProperty(data, '__meta', {
+    Object.defineProperty(data, '__message', {
       enumerable: false,
       value: response.message,
     });

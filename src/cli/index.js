@@ -135,16 +135,19 @@ cli.command('buy', 'Buy a reward.')
   .action(rewards.buy)
   .cancel(cancel);
 
+cli.command('skills', 'List available skills (spells).')
+  .alias('spells')
+  .action(skills.list);
+
+cli.command('cast', 'Cast skill or spells.')
+  .action(skills.cast);
+
 cli.command('quest', 'List current quest details.')
   .action(async (args, callback) => {
     const questDetails = await user.quest();
     log(format.quest(questDetails));
     callback();
   });
-
-cli.command('skills', 'List available skills (spells).')
-  .alias('spells')
-  .action(skills.list);
 
 cli.command('sync', 'Runs cron.')
   .alias('cron')
@@ -162,6 +165,7 @@ export default async function run() {
   ]);
   // preload content.
   content.getContent();
+  user.quest();
   log(`Welcome back ${stats.userName}!`);
   cli.delimiter('habitica $')
     .history('habitica-cli')

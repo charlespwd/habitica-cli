@@ -106,5 +106,5 @@ export async function buyReward({ shortId }) {
     method: 'POST',
   });
 
-  return result._meta; // eslint-disable-line no-underscore-dangle
+  return result.__message; // eslint-disable-line no-underscore-dangle
 }

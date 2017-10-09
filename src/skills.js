@@ -12,5 +12,18 @@ export async function getAllUserSkills() {
     user.stats(),
   ]);
 
-  return allSkills[stats.class];
+  return R.filter(
+    spell => spell.level <= stats.level,
+    allSkills[stats.class],
+  );
+}
+
+export async function cast({ spellId, targetId }) {
+  const data = await request(url(`user/class/cast/${spellId}`, {
+    targetId,
+  }), {
+    method: 'POST',
+  });
+
+  return data; // eslint-disable-line no-underscore-dangle
 }

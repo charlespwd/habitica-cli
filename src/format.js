@@ -9,16 +9,22 @@ function pp(n) {
   return n.toFixed(2);
 }
 
-const twoCharacterEmojis = new RegExp([
+const twoCharacterEmojis = [
   ':heart:',
   ':recycle:',
   '☢️ ️',
   ':arrow_up_right:',
   ':scissors:',
-].join('|'), 'g');
+].join('|');
+const twoCharacterEmojisRegex = new RegExp(twoCharacterEmojis, 'g');
+const twoCharacterEmojisRegexPlusSpace = new RegExp(`(${twoCharacterEmojis}) `, 'g');
 
 export function withEmojis(s) {
-  return emoji.emojify(s.replace(twoCharacterEmojis, '$& '));
+  return emoji.emojify(s.replace(twoCharacterEmojisRegex, '$& '));
+}
+
+export function withoutEmojis(s) {
+  return emoji.unemojify(s).replace(twoCharacterEmojisRegexPlusSpace, '$1');
 }
 
 const makeTableOpts = opts => R.merge(opts, {

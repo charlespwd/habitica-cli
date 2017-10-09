@@ -1,5 +1,5 @@
 import R from 'ramda';
-import { withEmojis } from '../format';
+import { withEmojis, withoutEmojis } from '../format';
 import {
   DAYS,
   DIFFICULTIES,
@@ -81,4 +81,52 @@ export const reward = rewards => ({
   name: 'reward',
   message: 'What are you looking for? ',
   choices: rewards.map(R.pipe(R.prop('label'), withEmojis)),
+});
+
+export const skill = skills => ({
+  type: 'list',
+  name: 'skill',
+  message: 'What are you going to cast? ',
+  choices: skills.map(x => ({
+    name: x.label,
+    value: x,
+  })),
+});
+
+export const skillTargetType = {
+  type: 'list',
+  name: 'skillTargetType',
+  message: 'What type of task?',
+  choices: ['HABIT', 'DAILY', 'TODO'],
+  when: answers => answers.skill.target === 'task',
+};
+
+const toLabel = R.pipe(R.prop('label'), withEmojis);
+const toChoice = x => ({
+  name: toLabel(x),
+  value: x,
+});
+
+export const skillTarget = tasks => ({
+  type: 'list',
+  name: 'skillTarget',
+  message: 'What is your target?',
+  choices: ({ skillTargetType }) => {
+    const [habits, dailies, todos] = tasks;
+
+    if (skillTargetType === 'HABIT') {
+      return habits.map(toChoice);
+    }
+
+    if (skillTargetType === 'DAILY') {
+      return dailies.map(toChoice);
+    }
+
+    if (skillTargetType === 'TODO') {
+      return todos.map(toChoice);
+    }
+
+    return [];
+  },
+  when: answers => !!answers.skillTargetType,
 });
