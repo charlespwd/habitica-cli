@@ -1,6 +1,6 @@
 {
   "name": "habitica-cli",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "An immersive command line interface for Habitica",
   "author": "Charles-Philippe Clermont @charlespwd",
   "keywords": [
