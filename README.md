@@ -14,6 +14,8 @@ Built on top of [vorpal](https://github.com/dthree/vorpal), this Habitica CLI is
 * [x] Listing, scoring, creating, deleting habits, tasks and todos
 * [x] Scoring habits, tasks and todos
 * [x] Creating/Deleting habits, tasks and todos
+* [x] Accessing the rewards shop and buying gear/rewards
+* [x] Casting spells
 * [x] Fighting bosses
 * [x] Showing quest progress
 * [x] Command history
