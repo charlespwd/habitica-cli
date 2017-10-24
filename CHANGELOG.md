@@ -1,4 +1,10 @@
 
+1.4.1 / 2017-10-24
+==================
+
+  * Add task list table word wrapping
+  * Add github links to package.json
+
 1.4.0 / 2017-10-09
 ==================
 
