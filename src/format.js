@@ -1,6 +1,6 @@
 import R from 'ramda';
 import emoji from 'node-emoji';
-import Table from 'cli-table';
+import Table from 'cli-table2';
 import colors from 'colors/safe';
 import { capitalize } from './utils';
 import { QUEST_TYPES } from './user';
@@ -28,15 +28,16 @@ export function withoutEmojis(s) {
 }
 
 const makeTableOpts = opts => R.merge(opts, {
+  wordWrap: true,
   chars: {
     'top': '─',
     'top-mid': '',
-    'top-left': '',
-    'top-right': '',
+    'top-left': '─',
+    'top-right': '─',
     'bottom': '─',
     'bottom-mid': '',
-    'bottom-left': '',
-    'bottom-right': '',
+    'bottom-left': '─',
+    'bottom-right': '─',
     'left': '',
     'left-mid': '─',
     'mid': '─',
@@ -77,7 +78,9 @@ const shouldShowCompletedColumn = (task, filterType) => (
 );
 
 export function tasks(taskList, filterType) {
-  const table = makeTable({});
+  const table = makeTable({
+    colWidths: [5, process.stdout.columns - 5 - 3],
+  });
   const taskFilter = getFilter(filterType);
 
   taskList.filter(taskFilter).forEach((task) => {
