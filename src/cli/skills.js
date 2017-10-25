@@ -42,6 +42,11 @@ export async function cast(args, callback) {
   } else {
     const spellName = args.spell.toLowerCase();
     skill = R.find(spell => spell.label.toLowerCase() === spellName, spells);
+
+    if (!skill) {
+      throw new Error(`Spell named '${spellName}' does not exist. It's either a typo or you forgot to wrap the spell name in quotes (e.g. cast 'brutal smash' todo 10).`);
+    }
+
     skillId = skill.id;
 
     const { taskType, taskId } = args;
