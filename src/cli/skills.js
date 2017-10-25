@@ -23,24 +23,60 @@ export async function cast(args, callback) {
     ]),
   ]);
 
-  const answers = await this.prompt([
-    questions.skill(spells),
-    questions.skillTargetType,
-    questions.skillTarget(allTasks),
-  ]);
+  let skill;
+  let skillId;
+  let targetId;
+  let skillTarget;
 
-  const skillId = answers.skill.id;
-  const targetId = R.path(['skillTarget', 'id'], answers);
+  if (!args.spell) {
+    const answers = await this.prompt([
+      questions.skill(spells),
+      questions.skillTargetType,
+      questions.skillTarget(allTasks),
+    ]);
+
+    skill = answers.skill;
+    skillTarget = answers.skillTarget;
+    skillId = answers.skill.id;
+    targetId = R.path(['skillTarget', 'id'], answers);
+  } else {
+    const spellName = args.spell.toLowerCase();
+    skill = R.find(spell => spell.label.toLowerCase() === spellName, spells);
+    skillId = skill.id;
+
+    const { taskType, taskId } = args;
+    if (taskType && taskId) {
+      const taskTypeUpper = taskType.toUpperCase();
+      const [habits, dailies, todos] = allTasks;
+      const findTaskByShortId = R.find(task => task.shortId === taskId.toString());
+
+      if (taskTypeUpper === 'HABIT' || taskTypeUpper === 'HABITS') {
+        skillTarget = findTaskByShortId(habits);
+      } else if (taskTypeUpper === 'DAILY' || taskTypeUpper === 'DAILIES') {
+        skillTarget = findTaskByShortId(dailies);
+      } else if (taskTypeUpper === 'TODO' || taskTypeUpper === 'TODOS') {
+        skillTarget = findTaskByShortId(todos);
+      } else {
+        throw new Error('task type not supported try with `habit`, `daily` or `todo`');
+      }
+
+      if (!skillTarget) {
+        throw new Error(`Could not find ${taskType} with id = ${taskId}`);
+      }
+
+      targetId = skillTarget.id;
+    }
+  }
 
   try {
     await skills.cast({
       spellId: skillId,
       targetId,
     });
-    if (answers.skillTarget) {
-      log(`You cast ${answers.skill.label} on ${answers.skillTarget.label}!`);
+    if (skillTarget) {
+      log(`You cast ${skill.label} on ${skillTarget.label}!`);
     } else {
-      log(`You cast ${answers.skill.label}!`);
+      log(`You cast ${skill.label}!`);
     }
   } catch (e) {
     log(e.message);

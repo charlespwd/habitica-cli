@@ -139,7 +139,7 @@ cli.command('skills', 'List available skills (spells).')
   .alias('spells')
   .action(skills.list);
 
-cli.command('cast', 'Cast skill or spells.')
+cli.command('cast [spell] [taskType] [taskId]', 'Cast skill or spells.')
   .action(skills.cast);
 
 cli.command('quest', 'List current quest details.')

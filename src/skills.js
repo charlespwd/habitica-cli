@@ -15,7 +15,14 @@ export async function getAllUserSkills() {
   return R.filter(
     spell => spell.level <= stats.level,
     allSkills[stats.class],
-  );
+  ).map(x => ({
+    id: x.id,
+    label: x.label,
+    mana: x.mana,
+    level: x.level,
+    description: x.description,
+    target: x.target,
+  }));
 }
 
 export async function cast({ spellId, targetId }) {
