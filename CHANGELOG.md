@@ -1,4 +1,10 @@
 
+1.5.0 / 2017-10-30
+==================
+
+  * Add -n options to `{habit,dailies,todos} list` to list description
+  * Add fast cast (e.g. cast 'brutal smash' todo 0)
+
 1.4.1 / 2017-10-24
 ==================
 
