@@ -1,5 +1,3 @@
-import colors from 'colors/safe';
-import * as tasks from '../tasks';
 import * as user from '../user';
 import * as format from '../format';
 import * as content from '../content';
@@ -12,10 +10,10 @@ import * as create from './create';
 import * as rewards from './rewards';
 import * as skills from './skills';
 import * as destroy from './destroy';
+import * as list from './list';
 
 const vorpal = require('vorpal');
 
-const TYPES = tasks.TYPES;
 const cli = vorpal();
 
 export function cancel() {
@@ -34,15 +32,8 @@ cli.command('status', 'List your stats.')
 cli.command('habits list', 'List your habits.')
   .alias('habits')
   .alias('h')
-  .action(async (args, callback) => {
-    const habits = await tasks.getTasks({
-      type: TYPES.HABITS,
-    });
-
-    log(format.tasks(habits, 'all'));
-
-    callback();
-  });
+  .option('-n, --notes', 'List task descriptions too')
+  .action(list.habits);
 
 cli.command('habits score [ids...]', 'Score one or multiple habits.')
   .alias('hs')
@@ -65,15 +56,8 @@ cli.command('dailies list', 'List your dailies.')
   .alias('dailies')
   .alias('d')
   .option('-f, --filter [filter]', 'List filter type (all | due | grey).', ['due', 'all', 'grey'])
-  .action(async (args, callback) => {
-    const dailies = await tasks.getTasks({
-      type: TYPES.DAILIES,
-    });
-
-    log(format.tasks(dailies, args.options.filter));
-
-    callback();
-  });
+  .option('-n, --notes', 'List task descriptions too')
+  .action(list.dailies);
 
 cli.command('dailies complete [ids...]', 'Complete one or multiple dailies.')
   .alias('dailies score')
@@ -99,12 +83,8 @@ cli.command('todos list', 'List your todos.')
   .alias('todos')
   .alias('t')
   .option('-f, --filter [filter]', 'List filter type (all | dated | completed).', ['all', 'dated', 'completed'])
-  .action(async (args, callback) => {
-    const filter = args.options.filter || 'dated';
-    const todos = await tasks.getTodos({ filter });
-    log(format.tasks(todos, filter));
-    callback();
-  });
+  .option('-n, --notes', 'List task descriptions too')
+  .action(list.todos);
 
 cli.command('todos add', 'Create a new task.')
   .alias('new todo')

@@ -77,7 +77,17 @@ const shouldShowCompletedColumn = (task, filterType) => (
   (isDaily(task) && filterType === 'all')
 );
 
-export function tasks(taskList, filterType) {
+function label(task, withNotes = false) {
+  if (withNotes && task.notes) {
+    return [
+      task.label,
+      colors.grey(task.notes),
+    ].join('\n');
+  }
+  return task.label;
+}
+
+export function tasks(taskList, filterType, withNotes = false) {
   const table = makeTable({
     colWidths: [5, process.stdout.columns - 5 - 3],
   });
@@ -90,7 +100,7 @@ export function tasks(taskList, filterType) {
     if (shouldShowCompletedColumn(task, filterType)) {
       row.push(task.isCompleted ? 'X' : ' ');
     }
-    row.push(withEmojis(task.label));
+    row.push(withEmojis(label(task, withNotes)));
     table.push(row);
   });
 
