@@ -1,6 +1,6 @@
 import R from 'ramda';
 import emoji from 'node-emoji';
-import Table from 'cli-table2';
+import Table from 'cli-table3';
 import colors from 'colors/safe';
 import { capitalize } from './utils';
 import { QUEST_TYPES } from './user';
