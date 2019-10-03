@@ -146,8 +146,13 @@ export default async function run() {
   // preload content.
   content.getContent();
   user.quest();
-  log(`Welcome back ${stats.userName}!`);
-  cli.delimiter('habitica $')
-    .history('habitica-cli')
-    .show();
+  const args = process.argv.slice(2);
+  if (args.length > 0) {
+    cli.delimiter('').show().exec(args.reduce((a, b) => a + " " + b), (err, _) => process.exit(err ? 1 : 0));
+  } else {
+    log(`Welcome back ${stats.userName}!`);
+    cli.delimiter('habitica $')
+      .history('habitica-cli')
+      .show();
+  }
 }
