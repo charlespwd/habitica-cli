@@ -148,7 +148,7 @@ export default async function run() {
   user.quest();
   const args = process.argv.slice(2);
   if (args.length > 0) {
-    cli.delimiter('').show().exec(args.reduce((a, b) => a + " " + b), (err, _) => process.exit(err ? 1 : 0));
+    cli.delimiter('').show().exec(args.join(" "), (err, _) => process.exit(err ? 1 : 0));
   } else {
     log(`Welcome back ${stats.userName}!`);
     cli.delimiter('habitica $')
