@@ -32,10 +32,14 @@
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-jsx-a11y": "^5.1.1",
     "eslint-plugin-react": "^7.1.0",
-    "nodemon": "^1.12.1"
+    "mocha": "^6.2.2",
+    "nodemon": "^1.12.1",
+    "superagent": "^5.1.0",
+    "yakbak": "^4.0.0"
   },
   "scripts": {
     "build": "rm -rf lib && babel -d lib src",
+    "test": "echo 'TODO: Add tests'",
     "prepublishOnly": "npm run build",
     "devel": "DEBUG=true nodemon --watch 'src/**/*.js' --ignore 'src/**/*.spec.js' --exec 'babel-node' index.js"
   },
