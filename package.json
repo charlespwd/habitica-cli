@@ -26,7 +26,9 @@
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
     "babel-preset-env": "^1.6.0",
+    "chai": "^4.2.0",
     "eslint": "^3.19.0 || ^4.3.0",
     "eslint-config-airbnb": "^15.1.0",
     "eslint-plugin-import": "^2.7.0",
@@ -34,12 +36,11 @@
     "eslint-plugin-react": "^7.1.0",
     "mocha": "^6.2.2",
     "nodemon": "^1.12.1",
-    "superagent": "^5.1.0",
-    "yakbak": "^4.0.0"
+    "talkback": "^1.12.0"
   },
   "scripts": {
     "build": "rm -rf lib && babel -d lib src",
-    "test": "echo 'TODO: Add tests'",
+    "test": "mocha --require babel-core/register",
     "prepublishOnly": "npm run build",
     "devel": "DEBUG=true nodemon --watch 'src/**/*.js' --ignore 'src/**/*.spec.js' --exec 'babel-node' index.js"
   },

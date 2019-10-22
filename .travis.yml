@@ -2,4 +2,7 @@ language: node_js
 node_js:
   - 10
 before_script:
+  - mkdir -p $HOME/.config/habitica/
+  - printf "[Habitica]\nlogin = login\npassword = pass" > $HOME/.config/habitica/auth.cfg
+  - cat $HOME/.config/habitica/auth.cfg
   - npm run build
