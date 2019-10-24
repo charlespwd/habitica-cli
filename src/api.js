@@ -24,7 +24,10 @@ https://github.com/charlespwd/habitica-cli#quick-start`);
 
 export const getUserID = () => config.Habitica.login;
 export const getApiKey = () => config.Habitica.password;
-export const url = (uri, options) => `${BASE_URL}/${uri}?${qs.stringify(options)}`;
+export const url = (uri, options, host) => {
+  const baseUrl = host || BASE_URL;
+  return `${baseUrl}/${uri}?${qs.stringify(options)}`;
+};
 
 async function makeRequest(url, params = {}) {
   const start = Date.now();
@@ -54,6 +57,7 @@ async function makeRequest(url, params = {}) {
 
     return data;
   } catch (e) {
+    console.log(e);
     if (e.statusCode >= 400 && e.statusCode < 500) {
       throw new Error(e.error.message);
     }

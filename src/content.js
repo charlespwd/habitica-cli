@@ -1,7 +1,7 @@
 import R from 'ramda';
 import { request, url } from './api';
 
-export const getContent = R.memoize(() => request(url('content')));
+export const getContent = R.memoize(host => request(url('content', null, host)));
 
 const toSkills = R.pipe(
   R.prop('spells'),
