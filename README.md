@@ -1,3 +1,6 @@
+> **Warning**
+> _This project is no longer maintained._
+
 # habitica-cli
 
 An immersive command line interface for [Habitica](https://habitica.com) which features built-in emoji support, command history and tab completion!
